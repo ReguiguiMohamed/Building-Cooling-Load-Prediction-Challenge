@@ -1,0 +1,16 @@
+name: building-cooling-prediction
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12.7
+  - pandas
+  - numpy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyter
+  - xgboost
+  - lightgbm
+  - tensorflow
+  - pyyaml

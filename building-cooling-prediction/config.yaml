@@ -1,0 +1,20 @@
+project_name: "Building-Cooling-Load-Prediction"
+data:
+  raw:
+    building_x: "data/raw/Building_X.csv"
+    test: "data/raw/test.csv"
+    weather_2023: "data/raw/external/hk_weather_2023.csv"
+    weather_2024_jan: "data/raw/external/hk_weather_2024_jan.csv"
+  processed:
+    hourly_training_data: "data/processed/hourly_training_data.csv"
+    features_train: "data/processed/features_train.csv"
+    features_test: "data/processed/features_test.csv"
+    chiller_loads: "data/processed/chiller_loads.csv"
+  submissions: "data/submissions/"
+
+models:
+  trained_models: "models/trained_models/"
+  model_configs: "models/model_configs/"
+
+reports:
+  figures: "reports/figures/"
