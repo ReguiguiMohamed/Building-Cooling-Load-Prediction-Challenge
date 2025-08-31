@@ -11,7 +11,7 @@ def aggregate_to_hourly(df: pd.DataFrame, timestamp_col: str = 'timestamp') -> p
     Returns:
         DataFrame with hourly aggregated data.
     """
-    df[timestamp_col] = pd.to_datetime(df[timestamp_col])
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col], dayfirst=True)
     df.set_index(timestamp_col, inplace=True)
-    hourly_df = df.resample('H').mean()
+    hourly_df = df.resample('h').mean()
     return hourly_df.reset_index()
