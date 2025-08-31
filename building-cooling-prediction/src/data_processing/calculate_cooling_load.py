@@ -3,34 +3,29 @@ from src.utils import constants
 
 def calculate_chiller_cooling_load(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculates the cooling load for each chiller.
+    Calculates the cooling load for each chiller and the total cooling load.
 
     Args:
-        df: DataFrame with building data, including chiller flow rates and temperature differences.
-            Assumes columns like 'chiller_i_flow_rate' and 'chiller_i_return_temp' and 'chiller_i_supply_temp'
-            for each chiller i.
+        df: DataFrame with building data.
 
     Returns:
-        DataFrame with calculated cooling loads for each chiller.
+        DataFrame with calculated cooling loads for each chiller and the total cooling load.
     """
-    # This is a placeholder implementation.
-    # The actual implementation will depend on the column names in Building_X.csv
-    # For now, we assume the following columns exist:
-    # - chiller_1_flow_rate, chiller_1_supply_temp, chiller_1_return_temp
-    # - chiller_2_flow_rate, chiller_2_supply_temp, chiller_2_return_temp
-    # ... and so on.
-
-    for i in range(1, 6): # Assuming 5 chillers
-        flow_rate_col = f'chiller_{i}_flow_rate'
-        supply_temp_col = f'chiller_{i}_supply_temp'
-        return_temp_col = f'chiller_{i}_return_temp'
-        cooling_load_col = f'chiller_{i}_cooling_load_kw'
+    for i in range(1, 4):  # For chillers 1, 2, and 3
+        chiller_id = f"CHR-0{i}"
+        flow_rate_col = f"{chiller_id}-CHWFWR"
+        supply_temp_col = f"{chiller_id}-CHWSWT"
+        return_temp_col = f"{chiller_id}-CHWRWT"
+        cooling_load_col = f"{chiller_id}-CL"
 
         if all(col in df.columns for col in [flow_rate_col, supply_temp_col, return_temp_col]):
-            # Cooling Load (kW) = Flow Rate (m³/h) * Specific Heat (kJ/kg°C) * Density (kg/m³) * Temp Diff (°C) / 3600 (s/h)
-            # Assuming density of water is 1000 kg/m³
-            # Cooling Load (kW) = Flow Rate (m³/h) * 4.186 * 1000 * (Return Temp - Supply Temp) / 3600
-            df[cooling_load_col] = (df[flow_rate_col] * constants.CP_WATER * 1000 *
-                                    (df[return_temp_col] - df[supply_temp_col])) / 3600
+            delta_t = df[return_temp_col] - df[supply_temp_col]
+            # Cooling Load (kW) = 4.19 * FR * ΔT / 3600
+            df[cooling_load_col] = (constants.CP_WATER * df[flow_rate_col] * delta_t) / 3600
+
+    # Calculate Total Cooling Load
+    chiller_load_cols = [f"CHR-0{i}-CL" for i in range(1, 4) if f"CHR-0{i}-CL" in df.columns]
+    if chiller_load_cols:
+        df['Total_Cooling_Load'] = df[chiller_load_cols].sum(axis=1)
 
     return df
