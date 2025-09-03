@@ -9,7 +9,7 @@ class MeanBaseline:
     mean_value_: float = 0.0
 
     def fit(self, y):
-        self.mean_value_ = float(np.mean(y))
+        self.mean_value_ = float(np.nanmean(y))
         return self
 
     def predict(self, X):
@@ -22,7 +22,7 @@ class LastValueBaseline:
     last_value_: float = 0.0
 
     def fit(self, y):
-        self.last_value_ = float(y[-1])
+        self.last_value_ = float(np.nan_to_num(y[-1]))
         return self
 
     def predict(self, X):
@@ -36,8 +36,28 @@ class LinearRegressionBaseline:
         self.model = LinearRegression()
 
     def fit(self, X, y):
-        self.model.fit(X, y)
+        # Ensure numpy arrays
+        X_arr = np.asarray(X)
+        y_arr = np.asarray(y).ravel()
+
+        # Handle 1D feature input
+        if X_arr.ndim == 1:
+            X_arr = X_arr.reshape(-1, 1)
+
+        # Build mask of valid rows: drop NaNs in y and, if numeric, in X
+        valid_mask = ~np.isnan(y_arr)
+        # If X is numeric, also drop rows with NaNs in X to avoid downstream errors
+        if np.issubdtype(X_arr.dtype, np.number):
+            valid_mask &= ~np.any(np.isnan(X_arr), axis=1)
+
+        if not np.any(valid_mask):
+            raise ValueError("No valid samples after dropping NaNs in X or y.")
+
+        self.model.fit(X_arr[valid_mask], y_arr[valid_mask])
         return self
 
     def predict(self, X):
-        return self.model.predict(X)
+        X_arr = np.asarray(X)
+        if X_arr.ndim == 1:
+            X_arr = X_arr.reshape(-1, 1)
+        return self.model.predict(X_arr)
