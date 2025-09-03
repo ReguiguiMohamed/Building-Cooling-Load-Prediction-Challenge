@@ -1,0 +1,18 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Model Development\n",
+    "This notebook documents baseline, tree-based, and deep learning models used for building cooling load prediction.\n",
+    "\n",
+    "## Baseline Models\n",
+    "- Mean predictor\n",
+    "- Last value predictor\n",
+    "- Linear regression baseline\n",
+    "\n",
+    "## Tree-Based Models\n",
+    "- XGBoost\n",
+    "- LightGBM\n",
+    "\n",

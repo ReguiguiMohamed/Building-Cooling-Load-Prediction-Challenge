@@ -1,4 +1,5 @@
 import json
+import joblib
 from pathlib import Path
 from typing import Any, Dict
 
@@ -37,7 +38,7 @@ def train_xgboost(X_train, y_train, **override_params):
     model = xgb.XGBRegressor(**config)
     model.fit(X_train, y_train)
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
-    model.save_model(MODEL_DIR / 'xgboost_model.json')
+    joblib.dump(model, MODEL_DIR / 'xgboost_model.pkl')
     return model
 
 
@@ -49,5 +50,5 @@ def train_lightgbm(X_train, y_train, **override_params):
     model = lgb.LGBMRegressor(**config)
     model.fit(X_train, y_train)
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
-    model.booster_.save_model(str(MODEL_DIR / 'lightgbm_model.txt'))
+    joblib.dump(model, MODEL_DIR / 'lightgbm_model.pkl')
     return model
