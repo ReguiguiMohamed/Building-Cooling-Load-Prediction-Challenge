@@ -1,13 +1,18 @@
+"""Evaluation metrics used throughout the project."""
+
 import numpy as np
 from sklearn.metrics import mean_squared_error
+
+__all__ = ["rmse", "nrmse"]
 
 
 def rmse(y_true, y_pred):
     """Root mean squared error.
 
-    Ignores positions where either `y_true` or `y_pred` is NaN to avoid
-    scikit-learn raising a ValueError on NaN inputs.
+    Positions where either ``y_true`` or ``y_pred`` are ``NaN`` are ignored to
+    match scikit-learn's behaviour on non-finite values.
     """
+
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
     mask = ~(np.isnan(y_true) | np.isnan(y_pred))
@@ -17,8 +22,15 @@ def rmse(y_true, y_pred):
 
 
 def nrmse(y_true, y_pred):
-    """Normalized root mean squared error."""
-    denominator = np.nanmax(y_true) - np.nanmin(y_true)
-    if denominator == 0:
+    """Normalized RMSE.
+
+    The RMSE is normalised by the range (max - min) of ``y_true``. If the
+    range is zero the function returns ``NaN`` to avoid division by zero.
+    """
+
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    denom = np.nanptp(y_true)  # equivalent to max - min while ignoring NaNs
+    if denom == 0:
         return np.nan
-    return rmse(y_true, y_pred) / denominator
+    return rmse(y_true, y_pred) / denom
