@@ -13,6 +13,9 @@ def create_lag_features(df: pd.DataFrame, cols_to_lag: list[str], window_sizes: 
         DataFrame with new lag and rolling window features.
     """
     for col in cols_to_lag:
+        if col not in df.columns:
+            # Skip missing columns to be robust across train/test
+            continue
         for window in window_sizes:
             # Lag features
             df[f'{col}_lag_{window}'] = df[col].shift(window)

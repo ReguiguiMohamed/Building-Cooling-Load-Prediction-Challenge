@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from .load_data import load_csv_data
+from .load_data import load_csv_data, resolve_path
 
 
 def load_weather_data(*paths: str) -> pd.DataFrame:
@@ -19,7 +19,7 @@ def load_weather_data(*paths: str) -> pd.DataFrame:
     """
     dataframes = []
     for p in paths:
-        path = Path(p)
+        path = resolve_path(str(p))
         if not path.exists():
             raise FileNotFoundError(f"Weather file not found: {path}")
         dataframes.append(load_csv_data(str(path)))
