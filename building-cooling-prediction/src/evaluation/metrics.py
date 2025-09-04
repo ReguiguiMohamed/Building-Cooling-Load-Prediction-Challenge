@@ -30,7 +30,15 @@ def nrmse(y_true, y_pred):
 
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
-    denom = np.nanptp(y_true)  # equivalent to max - min while ignoring NaNs
+    
+    # Replace deprecated np.nanptp with NumPy 2.0+ compatible version
+    # np.nanptp(y_true) is equivalent to np.ptp of non-NaN values
+    valid_values = y_true[~np.isnan(y_true)]
+    if len(valid_values) == 0:
+        denom = 0  # All values are NaN
+    else:
+        denom = np.ptp(valid_values)  # equivalent to max - min while ignoring NaNs
+    
     if denom == 0:
         return np.nan
     return rmse(y_true, y_pred) / denom
